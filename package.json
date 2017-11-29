@@ -1,0 +1,23 @@
+{
+  "name": "when2.0meet",
+  "version": "1.0.0",
+  "description": "When2Meet upgraded",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saumeeld/When2.0Meet.git"
+  },
+  "author": "Saumeel Desai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saumeeld/When2.0Meet/issues"
+  },
+  "homepage": "https://github.com/saumeeld/When2.0Meet#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  }
+}
