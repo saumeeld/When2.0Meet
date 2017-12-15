@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Login</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	</head>
+
+	<body>
+
+		<h4> Add Participants By Username or Email: </h4>
+		<input type = "text" id = "participants">
+		<input type = "hidden" id = "calendar_id" value = <%= calendar_id %> >
+		<button type= "button" class="btn btn-primary btn-lg" id = "add_participants">Add</button>
+
+		<div class = "row" id = "added_participants">
+			<div class = "col">Participants: </div>
+
+		 </div>
+
+		<div class = "container">
+			<% for (var i=0; i<dates.length;) {var temp = i; %>
+
+				<div class = "row">
+					<div class = "col"></div>
+					<%	for(j = i; i <(j + 7); i++){%>
+						<% if (i <dates.length) {%>
+							<div class = "col" align = "center"> <%= dates[i] %> </div>
+						<%} else{ %>
+							<div class = "col" align = "center"></div>
+						<% } %>
+					<%}
+					%>
+				</div>
+				
+				<% for (var j = 0; j < 6; j++) { var l = temp; %>
+					<div class = "row">
+
+						<div class = "col">
+							<%= 9 + j*.5 %>
+						</div>
+
+						<% for(var k = 0; k < 7; k++) {%> 
+							<% if (l < dates.length) {%>
+								<div class = "col selectable" style = "color:red;border-style:solid" data-date = <%= dates[l]%> data-time = <%= 9 + j*.5%> > </div>
+							<%} else {%>
+								<div class = "col" > </div>
+							<%} l++; %>
+							
+						<%} %>
+
+					</div>
+				<%} %>
+
+			<% } %>
+
+		</div>
+
+
+
+
+	</body>
+
+	<script> 
+
+
+		// for (var i = 0; i < <%= participants.length %>; i++){
+		// 	for (var j = 0; j < <%= participants[i].selected_dates.length %>; j++){
+		// 		for (var k = 0; k < <%= participants[i].selected_dates.time %>)
+		// 	}
+		// }
+
+		var mousedown = false;
+		var changedState = false;
+
+		var userSelectedDates = {};
+
+		$('body').css("user-select", "none");
+		$('body').css("height", "100vh");
+
+
+		$('body').on("mousedown", function(){
+			mousedown = true;
+		});
+
+		$('body').on("mouseup", function(){
+			mousedown = false;
+
+			if (changedState){
+				$.post('/updateSelectedTime',  {'calendar_id': $('#calendar_id').val(), 'times': userSelectedDates} )
+			}
+			console.log("senttt");
+
+			changedState = false;
+		});
+
+		$('.selectable').on("mousedown", function(){
+				$(this).css("color", "green");
+				date = $(this).data('date');
+				time = $(this).data('time');
+
+				if (userSelectedDates.hasOwnProperty(date)){
+					userSelectedDates[date].push(time);
+				}
+				else {
+					userSelectedDates[date] = [];
+					userSelectedDates[date].push(time);
+				}
+
+				console.log(userSelectedDates);
+				changedState = true;
+		});
+
+		$('.selectable').on("mouseover", function(){
+			if (mousedown){
+				$(this).css("color", "green");
+				date = $(this).data('date');
+				time = $(this).data('time');
+
+				if (userSelectedDates.hasOwnProperty(date)){
+					userSelectedDates[date].push(time);
+				}
+				else {
+					userSelectedDates[date] = [];
+					userSelectedDates[date].push(time);
+				}
+
+				console.log(userSelectedDates);
+				changedState = true;
+			}
+		});
+
+
+
+		$('#add_participants').on("click", function () {
+			$.post('/add_participants', {'calendar_id': $('#calendar_id').val(), 'participants': $('#participants').val()}, function (response){
+					if (response === "No such user found"){
+						alert("No user found, try again");
+					}
+					else{
+						$('#added_participants').append('<div class = "col">' + response + '</div>');
+					}
+				});
+		});
+
+	</script>
+
+
+</html>

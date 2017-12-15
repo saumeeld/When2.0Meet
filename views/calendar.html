@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Select Dates</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+		<link rel="stylesheet" href="calendar.css">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+
+	</head>
+
+	<body>
+		<h4> Event Title: </h4>
+		<input type = "text" id = "event_title">
+
+		<div class="container" id = "calendar">
+
+			<div class = "row" id = "cal-navbar"> 
+				<div class = "col" align = "center"> <button type="button" class="btn btn-primary btn-lg" id = "prev-btn">Previous</button> </div>
+				<div class = "col" align = "center"> <span id = "view-month" > </span></div>
+				<div class = "col" align = "center"> <button type="button" class="btn btn-primary btn-lg" id = "next-btn">Next</button> </div>
+			</div>
+
+			<div class = "row">
+					<div class = "col" align = "center"> Sunday </div>
+
+					<div class = "col" align = "center"> Monday </div>
+
+					<div class = "col" align = "center"> Tueday </div>
+
+					<div class = "col" align = "center"> Wednesday </div>
+
+					<div class = "col" align = "center"> Thursday </div>
+
+					<div class = "col" align = "center"> Friday </div>
+
+					<div class = "col" align = "center"> Saturday </div>
+			</div>
+
+
+
+			<div id = "dates">
+
+			</div>
+
+		</div>
+
+		<button class="btn btn-primary" type="submit" id = "setTimes">Set Times</button>
+
+	</body>
+
+	<!-- taking care of this in the backend might be nicer, (then use ajax to update?) -->
+	<script>
+
+		var month = new Array();
+		month[0] = "January";
+		month[1] = "February";
+		month[2] = "March";
+		month[3] = "April";
+		month[4] = "May";
+		month[5] = "June";
+		month[6] = "July";
+		month[7] = "August";
+		month[8] = "September";
+		month[9] = "October";
+		month[10] = "November";
+		month[11] = "December";
+
+		var day = new Array();
+		day[0] = "Sunday";
+		day[0] = "Monday";
+		day[0] = "Tuesday";
+		day[0] = "Wednesday";
+		day[0] = "Thursday";
+		day[0] = "Friday";
+		day[0] = "Saturday";
+
+		var selectedDates = [];
+
+		function getMonthByName(monthNum) {
+			return month[monthNum];
+		};
+
+		function getDayByName(dayNum) {
+			return day[dayNum];
+		};
+
+		//start values
+		var initialDate = new Date();
+		var startMonth = initialDate.getMonth();
+		var startYear = initialDate.getFullYear();
+
+		//current values
+		var currDate = new Date(startYear, startMonth);
+		var currMonth = currDate.getMonth();
+		var currMonthName = getMonthByName(currMonth);
+		var currYear = currDate.getFullYear(); 
+
+
+		function getDaysInCurrMonth() {
+		    return new Date(currYear, currMonth + 1, 0).getDate();
+		}
+
+		function clearCalendar() {
+			$('#dates').empty();
+		}
+
+		function createCalendar(firstDay, totalDays) {
+			$('#view-month').text(getMonthByName(currMonth) + ' ' + currYear);
+
+			var days = 0;
+			var row = $('<div>', {"class": "row"});
+			var appending = "";
+			var firstRow = true;
+
+			while (days < totalDays){
+				var row = $('<div>', {"class": "row"});
+
+				for (var j = 0; j < 7; j++){
+					if (days >= totalDays){
+						appending = ('<div class = "col" align = "center"></div>');
+					}
+					else if (firstRow) {
+						if (j < firstDay){
+							appending = ('<div class = "col" align = "center"></div>');
+							days--;
+						}
+						else {
+							if (selectedDates.includes(currMonth + "/" + (days + 1) + "/" + currYear)){
+								appending = ('<div class = "col" align = "center"><div class = "date red"><span>' + (days + 1) + '</span></div></div>');
+							}
+							else {
+								appending = ('<div class = "col" align = "center"><div class = "date"><span>' + (days + 1) + '</span></div></div>');
+							}
+						}
+					}
+					else {
+						if (selectedDates.includes(currMonth + "/" + (days + 1) + "/" + currYear)){
+								appending = ('<div class = "col" align = "center"><div class = "date red"><span>' + (days + 1) + '</span></div></div>');
+							}
+						else {
+							appending = ('<div class = "col" align = "center"><div class = "date"><span>' + (days + 1) + '</span></div></div>');
+						}
+					}
+
+					row.append(appending);
+					days++;
+					
+				}
+
+				firstRow = false;
+				$('#dates').append(row);
+			}
+
+			$('.date').on("click", function(){
+				var date = currMonth + "/" + $(this).find('span').text() + "/" + currYear;
+				console.log(selectedDates);
+				if (!selectedDates.includes(date)){
+					$(this).addClass('red');
+					selectedDates.push(date);
+				}
+			})
+		}
+
+
+		function getPrevMonth() {			
+			currMonth--;
+			currDate = new Date(currYear, currMonth);
+			currMonth = currDate.getMonth();
+			currMonthName = getMonthByName(currMonth);
+			currYear = currDate.getFullYear();
+			clearCalendar();
+			createCalendar(new Date(currYear, currMonth, 1).getDay(), getDaysInCurrMonth());
+		}
+
+		function getNextMonth() {
+			currMonth++;
+			currDate = new Date(currYear, currMonth);
+			currMonth = currDate.getMonth();
+			currMonthName = getMonthByName(currMonth);
+			currYear = currDate.getFullYear();
+			clearCalendar();
+			createCalendar(new Date(currYear, currMonth, 1).getDay(), getDaysInCurrMonth());
+		}
+
+
+		$(document).ready(function() {
+			console.log("hi");
+			$('#prev-btn').on("click", function(){
+				getPrevMonth();
+			});
+
+			$('#next-btn').on("click", function(){
+				getNextMonth();
+			});
+
+			$('#setTimes').on("click", function(){
+				selectedDates.sort(function (a, b){
+					a_nums = a.split("/");
+					b_nums = b.split("/");
+
+					if (Number(a_nums[2]) > Number(b_nums[2])) {
+						return 1;
+					}
+					else if (Number(a_nums[2]) < Number(b_nums[2])) {
+						return -1;
+					}
+					else {
+						if (Number(a_nums[0]) > Number(b_nums[0])) {
+							return 1;
+						}
+						else if (Number(a_nums[0]) < Number(b_nums[0])) {
+							return -1;
+						}
+						else {
+							if (Number(a_nums[1]) > Number(b_nums[1])) {
+								return 1;
+							}
+							else if (Number(a_nums[1]) < Number(b_nums[1])) {
+								return -1;
+							}	
+							else {
+								return 0;
+							}
+						}
+					}
+
+
+				});
+
+
+				$.post('/setTimes', {'event_title': $('#event_title').val(), 'dates': selectedDates}, function (response){
+					$('body').html(response);
+				});
+			})
+
+
+    		createCalendar(currDate.getDay(), getDaysInCurrMonth());
+		});
+
+
+
+
+
+	</script>
+
+</html>

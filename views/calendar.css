@@ -1,0 +1,20 @@
+#cal-navbar {
+	margin-top: 5vh;
+	margin-bottom: 5vh;
+}
+
+
+#calendar {
+	height: 15vh ;
+}
+
+
+.date {
+	height: 10vh ;
+	margin: auto;
+	line-height: 10vh;
+}
+
+.red {
+	background-color: red;
+}
