@@ -1,8 +1,12 @@
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/when2meet');
+function connectToDB() {
+	var mongoose = require('mongoose');
+	mongoose.connect('mongodb://localhost/when2meet');
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('we\'re connected!');
-});
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function() {
+	  console.log('we\'re connected!');
+	});
+};
+
+module.exports.connectToDB = connectToDB
